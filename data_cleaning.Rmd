@@ -94,12 +94,12 @@ unique_genres <- unique(unlist(strsplit(games$genres, ",")))
 
 ```{r data_export}
 # meta_data without dropping any original columns
-write_csv(games, "clean_data_meta.csv") # dim: 18295 x 197
+write_csv(games, "clean_data/clean_data_meta.csv") # dim: 18295 x 197
 
 # Remove redundant columns
 games = subset(games, select = -c(release_date, link, num_players, num_players_online, genres, esrb_descs))
 # Export clean data for EDA visualizations (including data with NAs)
-write_csv(games, "clean_data_eda.csv") # dim: 18295 x 191
+write_csv(games, "clean_data/clean_data_eda.csv") # dim: 18295 x 191
 
 # Count NAs in the first 16 vars (i.e. non-dummy)
 data.frame(colSums(is.na(games[1:16]))) 
@@ -108,7 +108,7 @@ cols_with_na= c("developers", "meta_reviews", "user_reviews", "publishers", "esr
 # Remove obs that has NAs for all of the above columns
 games <- games[rowSums(is.na(games[,cols_with_na])) != length(cols_with_na),]
 # Export tidy data for modeling
-write_csv(games, "clean_data_model.csv") # dim: 17657 x 191
+write_csv(games, "clean_data/clean_data_model.csv") # dim: 17657 x 191
 ```
 
 ```{r textual_analysis}
