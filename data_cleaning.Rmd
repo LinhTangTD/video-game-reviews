@@ -1,0 +1,128 @@
+---
+title: "DataCleaning"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r cars, warning=FALSE}
+library(readr)
+library(tidyr) ## For data wrangling and visualization
+library(dplyr) 
+library(lubridate) ## To work with dates
+library(splitstackshape) 
+library(udpipe) ## For textual analysis
+```
+
+```{r read_data, echo=FALSE}
+setwd('/Users/linhtang/Desktop/STA-395/Code')
+games = read_csv("games.csv")
+```
+
+```{r data_cleaning}
+# Rename columns for consistent naming convention 
+games = games %>% rename_with(tolower)
+games = rename(games, meta_score = meta, user_score = user, esrb_ratings = ratings)
+
+# Trim whitespaces in character data
+for(col in colnames(games)){
+ if(is.character(games[[col]])){
+   games[[col]] = trimws(games[[col]], which = c("both", "left", "right"), whitespace = "[ \t\r\n]")
+ }
+}
+
+# Remove duplicates based on title and platform -> 305 duplicates removed
+games = distinct(games, games$title, games$platform, .keep_all = T)
+games = games[, !duplicated(as.list(games))] # 18295 rows remaining
+
+# Change platform, developers, publishers, ratings variables to catergorical data
+games$platform = as.factor(games$platform)
+games$developers = as.factor(games$developers)
+games$publishers = as.factor(games$publishers)
+games$esrb_ratings = as.factor(games$esrb_ratings)
+
+# Change ranking variables to ordered catergorical data
+games$best_game = as.ordered(games$best_game)
+games$most_discussed = as.ordered(games$most_discussed)
+games$most_shared = as.ordered(games$most_shared)
+
+# Change release_date to datetime data type
+games$release_date = parse_date_time(games$release_date, "mdy")
+
+# Convert user score to numeric and scale to match meta score
+games$user_score = as.numeric(games$user_score) * 10
+
+# Calculate years since release
+today = as.Date(Sys.Date())
+games$years_since_released = time_length(difftime(today, games$release_date), "years")
+```
+
+```{r data_manipulation}
+# Create dummy variables to indicate whether game allows multiplayer and game allows online player
+games$allow_multiplayer = ifelse(games$num_players == "missing", "missing", ifelse(games$num_players == "1 Player", TRUE, FALSE))
+games$allow_online = ifelse(games$num_players_online == "missing", "missing", ifelse(grepl("No Online Multiplayer", games$num_players_online), FALSE, TRUE))
+
+# Change to categorical vars to include "missing" data
+games$allow_multiplayer = as.factor(games$allow_multiplayer)
+games$allow_online = as.factor(games$allow_online)
+
+# Create dummy variables for different genres
+games = cSplit_e(games, "genres", sep=",", type = "character", fill = 0, drop = F)
+
+# Categorize esrb_desc into 8 main ESRB content descriptors by ESRB website
+esrb_content_descriptors = c("Substances", "Blood", "Violence", "Humor", "Language", "Nudity", "Gambling", "Sexuality", "missing") # by https://www.esrb.org/ratings-guide/#cont_desc
+for(i in 1:nrow(games)){
+  if(!is.na(games$esrb_descs[i])){
+    games$esrb_descs[i] = paste(intersect(strsplit(games$esrb_descs[i], " ")[[1]], esrb_content_descriptors), collapse=",")
+  }
+}
+
+# Create dummy variables for different descriptors (esrb_desc_missing indicates "missing" desc)
+games = cSplit_e(games, "esrb_descs", sep=",", type = "character", fill = 0, drop = F) 
+```
+
+```{r data_exploring}
+# List unique genres in the data set
+unique_genres <- unique(unlist(strsplit(games$genres, ",")))
+# length(unique_genres) #168 genres (not including NA)
+
+# Summary of data
+# str(games)
+```
+
+```{r data_export}
+# meta_data without dropping any original columns
+write_csv(games, "clean_data_meta.csv") # dim: 18295 x 197
+
+# Remove redundant columns
+games = subset(games, select = -c(release_date, link, num_players, num_players_online, genres, esrb_descs))
+# Export clean data for EDA visualizations (including data with NAs)
+write_csv(games, "clean_data_eda.csv") # dim: 18295 x 191
+
+# Count NAs in the first 16 vars (i.e. non-dummy)
+data.frame(colSums(is.na(games[1:16]))) 
+# These columns are potential explanatory variables for our models contains but contains many NAs (>1% ~ 180): 
+cols_with_na= c("developers", "meta_reviews", "user_reviews", "publishers", "esrb_ratings", "best_game", "most_discussed", "most_shared", "allow_multiplayer", "allow_online")
+# Remove obs that has NAs for all of the above columns
+games <- games[rowSums(is.na(games[,cols_with_na])) != length(cols_with_na),]
+# Export tidy data for modeling
+write_csv(games, "clean_data_model.csv") # dim: 17657 x 191
+```
+
+```{r textual_analysis}
+# load model to analyze english text
+# games$game_id = 1:nrow(games)
+# model <- udpipe_download_model(language = "english")
+# udmodel_english <- udpipe_load_model(file = model$file_model)
+# s <- udpipe_annotate(udmodel_english, x = games$game_desc, doc_id = games$game_id)
+# x <- data.frame(s)
+# stats <- keywords_rake(x = x, term = "lemma", group = "doc_id", 
+#                        relevant = x$upos %in% c("NOUN", "ADJ"))
+# stats$key <- factor(stats$keyword, levels = rev(stats$keyword))
+# barchart(key ~ rake, data = head(subset(stats, freq > 3), 20), col = "red", 
+#          main = "Keywords identified by RAKE", 
+#          xlab = "Rake")
+```
+
