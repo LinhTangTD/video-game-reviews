@@ -17,7 +17,7 @@ library(udpipe) ## For textual analysis
 ```
 
 ```{r read_data, echo=FALSE}
-setwd('/Users/linhtang/Desktop/STA-395/Code')
+setwd('/Users/britney/Desktop/VGR')
 games = read_csv("games.csv")
 ```
 
@@ -26,7 +26,7 @@ games = read_csv("games.csv")
 games = games %>% rename_with(tolower)
 games = rename(games, meta_score = meta, user_score = user, esrb_ratings = ratings)
 
-# Trim whitespaces in character data
+# Trim white spaces in character data
 for(col in colnames(games)){
  if(is.character(games[[col]])){
    games[[col]] = trimws(games[[col]], which = c("both", "left", "right"), whitespace = "[ \t\r\n]")
@@ -34,16 +34,15 @@ for(col in colnames(games)){
 }
 
 # Remove duplicates based on title and platform -> 305 duplicates removed
-games = distinct(games, games$title, games$platform, .keep_all = T)
-games = games[, !duplicated(as.list(games))] # 18295 rows remaining
+games = distinct(games, title, platform, .keep_all = T)
 
-# Change platform, developers, publishers, ratings variables to catergorical data
+# Change platform, developers, publishers, ratings variables to categorical data
 games$platform = as.factor(games$platform)
 games$developers = as.factor(games$developers)
 games$publishers = as.factor(games$publishers)
 games$esrb_ratings = as.factor(games$esrb_ratings)
 
-# Change ranking variables to ordered catergorical data
+# Change ranking variables to ordered categorical data
 games$best_game = as.ordered(games$best_game)
 games$most_discussed = as.ordered(games$most_discussed)
 games$most_shared = as.ordered(games$most_shared)
@@ -60,8 +59,8 @@ games$years_since_released = time_length(difftime(today, games$release_date), "y
 ```
 
 ```{r data_manipulation}
-# Create dummy variables to indicate whether game allows multiplayer and game allows online player
-games$allow_multiplayer = ifelse(games$num_players == "missing", "missing", ifelse(games$num_players == "1 Player", TRUE, FALSE))
+# Create dummy variables to indicate whether game allows multiplayer and online gaming
+games$allow_multiplayer = ifelse(games$num_players == "missing", "missing", ifelse(games$num_players == "1 Player", FALSE, TRUE))
 games$allow_online = ifelse(games$num_players_online == "missing", "missing", ifelse(grepl("No Online Multiplayer", games$num_players_online), FALSE, TRUE))
 
 # Change to categorical vars to include "missing" data
@@ -85,7 +84,7 @@ games = cSplit_e(games, "esrb_descs", sep=",", type = "character", fill = 0, dro
 
 ```{r data_exploring}
 # List unique genres in the data set
-unique_genres <- unique(unlist(strsplit(games$genres, ",")))
+unique_genres = unique(unlist(strsplit(games$genres, ",")))
 # length(unique_genres) #168 genres (not including NA)
 
 # Summary of data
