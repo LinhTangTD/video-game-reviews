@@ -17,24 +17,46 @@ library(udpipe) ## For textual analysis
 ```
 
 ```{r read_data, echo=FALSE}
-setwd('/Users/britney/Desktop/VGR')
+setwd('/Users/linhtang/Desktop/STA-395/Code')
 games = read_csv("games.csv")
+games2 = read_csv("meta_games2.csv") #data with meta score only
+#summary(games)
 ```
 
-```{r data_cleaning}
+```{r merging}
+# Function to trim white spaces in character data
+clean_whitespace = function(df){
+  for(col in colnames(df)){
+   if(is.character(df[[col]])){
+     df[[col]] = trimws(df[[col]], which = c("both", "left", "right"), whitespace = "[ \t\r\n]")
+   }
+  }
+  return(df)
+}
+
+# Trim whitespaces
+games = clean_whitespace(games)
+games2 = clean_whitespace(games2)
+
+# Remove duplicates based on title and platform in both dataset 
+games = distinct(games, title, platform, .keep_all = T) # 305 duplicates removed
+games2 = distinct(games2, title, platform, .keep_all = T)
+
+# Collapse three cols of meta scores into one
+games2$meta = apply(games2[4:6], 1, function(x) x[!is.na(x)])
+games2 = games2[-c(3:6)] # drop unnecessary cols
+
+# Merge 2 data sets on title and platform by a left join
+games = games %>%
+  select(-meta) %>%
+  left_join(games2, by = c("title", "platform"))
+```
+
+
+```{r cleaning}
 # Rename columns for consistent naming convention 
 games = games %>% rename_with(tolower)
 games = rename(games, meta_score = meta, user_score = user, esrb_ratings = ratings)
-
-# Trim white spaces in character data
-for(col in colnames(games)){
- if(is.character(games[[col]])){
-   games[[col]] = trimws(games[[col]], which = c("both", "left", "right"), whitespace = "[ \t\r\n]")
- }
-}
-
-# Remove duplicates based on title and platform -> 305 duplicates removed
-games = distinct(games, title, platform, .keep_all = T)
 
 # Change platform, developers, publishers, ratings variables to categorical data
 games$platform = as.factor(games$platform)
@@ -42,23 +64,26 @@ games$developers = as.factor(games$developers)
 games$publishers = as.factor(games$publishers)
 games$esrb_ratings = as.factor(games$esrb_ratings)
 
-# Change ranking variables to ordered categorical data
-games$best_game = as.ordered(games$best_game)
-games$most_discussed = as.ordered(games$most_discussed)
-games$most_shared = as.ordered(games$most_shared)
+# If game ranking is NA, set it to 1 level lower than the the lowest rating
+games$most_discussed = replace_na(games$most_discussed, max(games$most_discussed, na.rm = TRUE))
+games$best_game = replace_na(games$best_game, max(games$best_game, na.rm = TRUE))
+games$most_shared = replace_na(games$most_shared, max(games$most_shared, na.rm = TRUE))
 
 # Change release_date to datetime data type
 games$release_date = parse_date_time(games$release_date, "mdy")
 
-# Convert user score to numeric and scale to match meta score
+# Convert user score to numeric, scale to match meta score scale (out of 100)
 games$user_score = as.numeric(games$user_score) * 10
+
+# Drop rows that user_score and meta_score are NAs
+games = games %>% drop_na(user_score, meta_score) 
 
 # Calculate years since release
 today = as.Date(Sys.Date())
 games$years_since_released = time_length(difftime(today, games$release_date), "years")
 ```
 
-```{r data_manipulation}
+```{r tidying}
 # Create dummy variables to indicate whether game allows multiplayer and online gaming
 games$allow_multiplayer = ifelse(games$num_players == "missing", "missing", ifelse(games$num_players == "1 Player", FALSE, TRUE))
 games$allow_online = ifelse(games$num_players_online == "missing", "missing", ifelse(grepl("No Online Multiplayer", games$num_players_online), FALSE, TRUE))
@@ -82,33 +107,29 @@ for(i in 1:nrow(games)){
 games = cSplit_e(games, "esrb_descs", sep=",", type = "character", fill = 0, drop = F) 
 ```
 
-```{r data_exploring}
-# List unique genres in the data set
-unique_genres = unique(unlist(strsplit(games$genres, ",")))
-# length(unique_genres) #168 genres (not including NA)
-
-# Summary of data
-# str(games)
-```
-
-```{r data_export}
+```{r exporting}
 # meta_data without dropping any original columns
 write_csv(games, "clean_data/clean_data_meta.csv") # dim: 18295 x 197
 
 # Remove redundant columns
-games = subset(games, select = -c(release_date, link, num_players, num_players_online, genres, esrb_descs))
+games = subset(games, select = -c(link, num_players, num_players_online, genres, esrb_descs))
 # Export clean data for EDA visualizations (including data with NAs)
-write_csv(games, "clean_data/clean_data_eda.csv") # dim: 18295 x 191
+write_csv(games, "clean_data/clean_data_eda.csv") # dim: 18295 x 192
 
 # Count NAs in the first 16 vars (i.e. non-dummy)
-data.frame(colSums(is.na(games[1:16]))) 
+#data.frame(colSums(is.na(games[1:17])))
 # These columns are potential explanatory variables for our models contains but contains many NAs (>1% ~ 180): 
-cols_with_na= c("developers", "meta_reviews", "user_reviews", "publishers", "esrb_ratings", "best_game", "most_discussed", "most_shared", "allow_multiplayer", "allow_online")
+#cols_with_na= c("developers", "meta_reviews", "user_reviews", "publishers", "esrb_ratings", "best_game", "most_discussed", "most_shared", "allow_multiplayer", "allow_online")
 # Remove obs that has NAs for all of the above columns
-games <- games[rowSums(is.na(games[,cols_with_na])) != length(cols_with_na),]
+#games <- games[rowSums(is.na(games[,cols_with_na])) != length(cols_with_na),]
+
+# Remove NAs from dataset
+games = games[complete.cases(games),]
+
 # Export tidy data for modeling
-write_csv(games, "clean_data/clean_data_model.csv") # dim: 17657 x 191
+write_csv(games, "clean_data/clean_data_model.csv") # dim: 16262 x 192
 ```
+
 
 ```{r textual_analysis}
 # load model to analyze english text
