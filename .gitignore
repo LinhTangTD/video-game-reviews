@@ -37,3 +37,9 @@ vignettes/*.pdf
 
 # R Environment Variables
 .Renviron
+
+# Original Data Files and packages
+games.csv	
+games_with_notes.csv
+meta_games2.csv
+english-ewt-ud-2.5-191206.udpipe
