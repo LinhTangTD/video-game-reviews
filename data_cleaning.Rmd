@@ -109,21 +109,13 @@ games = cSplit_e(games, "esrb_descs", sep=",", type = "character", fill = 0, dro
 
 ```{r exporting}
 # meta_data without dropping any original columns
-write_csv(games, "clean_data/clean_data_meta.csv") # dim: 18295 x 197
-
-# Remove redundant columns
-games = subset(games, select = -c(link, num_players, num_players_online, genres, esrb_descs))
-# Export clean data for EDA visualizations (including data with NAs)
-write_csv(games, "clean_data/clean_data_eda.csv") # dim: 18295 x 192
+write_csv(games, "clean_data/clean_data_all.csv") # dim: 18295 x 197
 
 # Count NAs in the first 16 vars (i.e. non-dummy)
 #data.frame(colSums(is.na(games[1:17])))
-# These columns are potential explanatory variables for our models contains but contains many NAs (>1% ~ 180): 
-#cols_with_na= c("developers", "meta_reviews", "user_reviews", "publishers", "esrb_ratings", "best_game", "most_discussed", "most_shared", "allow_multiplayer", "allow_online")
-# Remove obs that has NAs for all of the above columns
-#games <- games[rowSums(is.na(games[,cols_with_na])) != length(cols_with_na),]
 
-# Remove NAs from dataset
+# Remove redundant columns and NAs from dataset
+games = subset(games, select = -c(link, num_players, num_players_online, genres, esrb_descs))
 games = games[complete.cases(games),]
 
 # Export tidy data for modeling
