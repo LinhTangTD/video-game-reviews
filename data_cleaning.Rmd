@@ -58,7 +58,23 @@ games = games %>%
 games = games %>% rename_with(tolower)
 games = rename(games, meta_score = meta, user_score = user, esrb_ratings = ratings)
 
+# Adding company based on platform:
+games$company = case_when(
+    startsWith(games$platform, "PlayStation") ~ "Sony",
+    startsWith(games$platform, "Xbox") ~ "Microsoft",
+    startsWith(games$platform, "Wii") ~ "Nintendo",
+    startsWith(games$platform, "Nintendo") ~ "Nintendo",
+    startsWith(games$platform, "Game") ~ "Nintendo", #GameCub, Game Boy Advance
+    endsWith(games$platform, "DS") ~ "Nintendo", #3DS, DS
+    games$platform == "PC" ~ "PC",
+    games$platform == "Dreamcast" ~ "Sega",
+    games$platform == "PSP" ~ "Sony",
+    games$platform == "Stadia" ~ "PC",
+    games$platform == "Switch" ~ "Nintendo",
+    )
+
 # Change platform, developers, publishers, ratings variables to categorical data
+games$company = as.factor(games$company)
 games$platform = as.factor(games$platform)
 games$developers = as.factor(games$developers)
 games$publishers = as.factor(games$publishers)
@@ -120,8 +136,10 @@ games = games[complete.cases(games),]
 
 # Export tidy data for modeling
 write_csv(games, "clean_data/clean_data_model.csv") # dim: 16262 x 192
-```
 
+# Save data as RData format for faster import
+save(games, file="games_data.Rdata")
+```
 
 ```{r textual_analysis}
 # load model to analyze english text
