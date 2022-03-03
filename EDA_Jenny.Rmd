@@ -1,0 +1,363 @@
+---
+title: "EDA_Jenny"
+author: "Jenny Li"
+date: "2/20/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r warning = FALSE, message = FALSE}
+library (plotly)
+library (ggplot2)
+library (dplyr)
+library (tidyr)
+library (corrplot)
+library (RColorBrewer)
+library (forcats)
+library (stringr)
+```
+
+## Read Data
+```{r}
+clean_game <- read.csv("/Users/jennyli/Desktop/VGR/video-game-reviews/clean_data/clean_data_model.csv")
+```
+
+```{r}
+#summary statistics
+summary(clean_game$user_score)
+summary(clean_game$meta_reviews)
+summary(clean_game$user_reviews)
+summary(clean_game$meta_score)
+summary(clean_game$years_since_released)
+```
+
+```{r}
+#Most Common
+rank_platform <- sort (table(clean_game$platform), decreasing = TRUE)
+#Top 5 platforms
+head(rank_platform)
+#PC, PlayStation4, Xbox 360,PlayStation2, Switch, and PlayStation3
+
+rank_publisher<- sort (table(clean_game$publishers), decreasing = TRUE)
+#Top 5 publisher
+head(rank_publisher)
+#Ubisoft, Electronic Arts, Activision, Nintendo, Sega, and Capcom
+
+rank_developer <- sort (table(clean_game$developers), decreasing = TRUE)
+#Top 5 developer
+head(rank_developer)
+# Capcom, Telltale games, EA Sports, EA Canada, Knami, Ubisoft Montreal
+```
+
+```{r}
+#Distributions/ Histogram of scores
+#user score
+hist(clean_game$user_score)
+#meta score
+hist(clean_game$meta_score)
+```
+```{r}
+#Visualizing the difference between meta score and user score
+clean_game$score_diff <- clean_game$meta_score -clean_game$user_score
+hist(clean_game$score_diff)
+
+plot_ly(data = clean_game, type = "scatter",  mode = "markers", x = ~user_score, y = ~meta_score)
+#color by??
+```
+```{r}
+# Correlations for numeric columns 
+clean_game_cor <-select(clean_game,user_score, user_reviews, meta_score, meta_reviews, best_game, most_discussed, most_shared, score_diff, years_since_released)
+
+M <-cor(clean_game_cor)
+corrplot(M, type="upper", order="hclust",
+         col=brewer.pal(n=8, name="RdYlBu"))
+```
+
+
+```{r}
+#Frequency of ESRB Ratings and Pie plot
+table(clean_game$esrb_ratings)
+
+prop = table(clean_game$esrb_ratings)/nrow(clean_game)
+style = names(prop)
+
+plot_ly() %>%
+  add_trace(type = "pie", labels = ~style, values = ~prop, textinfo = "percent")
+```
+```{r}
+#Visualization of score difference for the top 5 platform
+clean_game_5platform <- filter (clean_game, platform == "PC"| platform == "PlayStation 4"|platform == "Xbox 360"| platform == "PlayStation 2"|platform == "PlayStation 3")
+
+#plot_ly(data = clean_game_5platform, type = "scatter",  mode = "markers", x = ~user_score, y = ~meta_score, color = ~platform)
+
+#plot_ly(data = clean_game_5platform) %>% 
+  #add_trace(type = "scatter",  x = ~user_score, y = ~meta_score, color = ~platform) #%>%
+ # add_lines( x = ~user_score, y = ~meta_score, color = ~platform) 
+
+ggplot(data=clean_game_5platform) +
+  geom_point(mapping = aes(x=user_score, y=meta_score, color=platform)) +
+  geom_smooth(mapping = aes(x=user_score, y=meta_score, color=platform), 
+      method=lm, se=FALSE, fullrange=TRUE) 
+```
+```{r}
+#Frequency of each esrb content descriptor
+esrb_freq <-list("Blood",sum(clean_game$esrb_descs_Blood), 
+                 "Gambling", sum(clean_game$esrb_descs_Gambling), 
+                 "Humor", sum(clean_game$esrb_descs_Humor),
+                 "Language", sum(clean_game$esrb_descs_Language),
+                 "Nudity", sum(clean_game$esrb_descs_Nudity),
+                 "Violence", sum(clean_game$esrb_descs_Violence),
+                 "Missing", sum(clean_game$esrb_descs_missing))
+
+## Violence 6081,  Blood 2790, Language 2422
+```
+
+
+```{r}
+#Frequency for genre
+genre_freq <-matrix (c (sum(clean_game$genres_2D), 
+                    sum(clean_game$genres_3D),
+                    sum(clean_game$genres_4X),
+                    sum(clean_game$genres_Action),
+                    sum(clean_game$genres_Action.Adventure),
+                    sum(clean_game$genres_Action.RPG),
+                    sum(clean_game$genres_Adventure),
+                    sum(clean_game$genres_Alternative),
+                    sum(clean_game$genres_Application),
+                    sum(clean_game$genres_Arcade),
+                    sum(clean_game$genres_Artillery),
+                    sum(clean_game$genres_Athletics),
+                    sum(clean_game$genres_Automobile),
+                    sum(clean_game$genres_Baseball),
+                    sum(clean_game$genres_Basketball),
+                    sum(clean_game$genres_Beat..Em.Up),
+                    sum(clean_game$genres_Biking),
+                    sum(clean_game$genres_Billiards),
+                    sum(clean_game$genres_Board...Card.Game),
+                    sum(clean_game$genres_Board.Games),
+                    sum(clean_game$genres_Bowling),
+                    sum(clean_game$genres_Boxing),
+                    sum(clean_game$genres_Boxing...Martial.Arts),
+                    sum(clean_game$genres_Breeding.Constructing),
+                    sum(clean_game$genres_Business...Tycoon),
+                    sum(clean_game$genres_Car.Combat),
+                    sum(clean_game$genres_Card.Battle),
+                    sum(clean_game$genres_Career),
+                    sum(clean_game$genres_City.Building),
+                    sum(clean_game$genres_Civilian),
+                    sum(clean_game$genres_Civilian.Plane),
+                    sum(clean_game$genres_Combat),
+                    sum(clean_game$genres_Command),
+                    sum(clean_game$genres_Compilation),
+                    sum(clean_game$genres_Console.style.RPG),
+                    sum(clean_game$genres_Cricket),
+                    sum(clean_game$genres_Dancing),
+                    sum(clean_game$genres_Defense),
+                    sum(clean_game$genres_Demolition.Derby),
+                    sum(clean_game$genres_Drag),
+                    sum(clean_game$genres_Driving),
+                    sum(clean_game$genres_Edutainment),
+                    sum(clean_game$genres_Exercise...Fitness),
+                    sum(clean_game$genres_Fantasy),
+                    sum(clean_game$genres_Fighting),
+                    sum(clean_game$genres_First.Person),
+                    sum(clean_game$genres_Fishing),
+                    sum(clean_game$genres_Flight),
+                    sum(clean_game$genres_Football),
+                    sum(clean_game$genres_Formula.One),
+                    sum(clean_game$genres_Futuristic),
+                    sum(clean_game$genres_Futuristic.Jet),
+                    sum(clean_game$genres_Futuristic.Sub),
+                    sum(clean_game$genres_Gambling),
+                    sum(clean_game$genres_General),
+                    sum(clean_game$genres_Golf),
+                    sum(clean_game$genres_Government),
+                    sum(clean_game$genres_GT...Street),
+                    sum(clean_game$genres_Helicopter),
+                    sum(clean_game$genres_Hidden.Object),
+                    sum(clean_game$genres_Historic),
+                    sum(clean_game$genres_Horizontal),
+                    sum(clean_game$genres_Horror),
+                    sum(clean_game$genres_Horse.Racing),
+                    sum(clean_game$genres_Hunting),
+                    sum(clean_game$genres_Ice.Hockey),
+                    sum(clean_game$genres_Individual),
+                    sum(clean_game$genres_Interactive.Movie),
+                    sum(clean_game$genres_Japanese.Style),
+                    sum(clean_game$genres_Kart),
+                    sum(clean_game$genres_Large.Spaceship),
+                    sum(clean_game$genres_Light.Gun),
+                    sum(clean_game$genres_Linear),
+                    sum(clean_game$genres_Logic),
+                    sum(clean_game$genres_Management),
+                    sum(clean_game$genres_Marine),
+                    sum(clean_game$genres_Massively.Multiplayer),
+                    sum(clean_game$genres_Massively.Multiplayer.Online),
+                    sum(clean_game$genres_Matching),
+                    sum(clean_game$genres_Mech),
+                    sum(clean_game$genres_Military),
+                    sum(clean_game$genres_Miscellaneous),
+                    sum(clean_game$genres_Mission.based),
+                    sum(clean_game$genres_MOBA),
+                    sum(clean_game$genres_Modern),
+                    sum(clean_game$genres_Modern.Jet),
+                    sum(clean_game$genres_Motocross),
+                    sum(clean_game$genres_Motorcycle),
+                    sum(clean_game$genres_Music),
+                    sum(clean_game$genres_Music.Maker),
+                    sum(clean_game$genres_Nature),
+                    sum(clean_game$genres_Olympic.Sports),
+                    sum(clean_game$genres_On.foot),
+                    sum(clean_game$genres_Open.World),
+                    sum(clean_game$genres_Other),
+                    sum(clean_game$genres_Parlor),
+                    sum(clean_game$genres_Party),
+                    sum(clean_game$genres_Party...Minigame),
+                    sum(clean_game$genres_PC.style.RPG),
+                    sum(clean_game$genres_Pet),
+                    sum(clean_game$genres_Pinball),
+                    sum(clean_game$genres_Platformer),
+                    sum(clean_game$genres_Point.and.Click),
+                    sum(clean_game$genres_Puzzle),
+                    sum(clean_game$genres_Racing),
+                    sum(clean_game$genres_Rail),
+                    sum(clean_game$genres_Rally...Offroad),
+                    sum(clean_game$genres_Real.Time),
+                    sum(clean_game$genres_Rhythm),
+                    sum(clean_game$genres_Roguelike),
+                    sum(clean_game$genres_Role.Playing),
+                    sum(clean_game$genres_Rugby),
+                    sum(clean_game$genres_Sandbox),
+                    sum(clean_game$genres_Sci.Fi),
+                    sum(clean_game$genres_Scrolling),
+                    sum(clean_game$genres_Ship),
+                    sum(clean_game$genres_Shoot..Em.Up),
+                    sum(clean_game$genres_Shooter),
+                    sum(clean_game$genres_Sim),
+                    sum(clean_game$genres_Simulation),
+                    sum(clean_game$genres_Skate...Skateboard),
+                    sum(clean_game$genres_Skateboarding),
+                    sum(clean_game$genres_Skating),
+                    sum(clean_game$genres_Ski...Snowboard),
+                    sum(clean_game$genres_Skiing),
+                    sum(clean_game$genres_Small.Spaceship),
+                    sum(clean_game$genres_Snow...Water),
+                    sum(clean_game$genres_Snowboarding),
+                    sum(clean_game$genres_Soccer),
+                    sum(clean_game$genres_Space),
+                    sum(clean_game$genres_Sports),
+                    sum(clean_game$genres_Stacking),
+                    sum(clean_game$genres_Static),
+                    sum(clean_game$genres_Stock.Car),
+                    sum(clean_game$genres_Strategy),
+                    sum(clean_game$genres_Street),
+                    sum(clean_game$genres_Submarine),
+                    sum(clean_game$genres_Surf...Wakeboard),
+                    sum(clean_game$genres_Surfing),
+                    sum(clean_game$genres_Survival),
+                    sum(clean_game$genres_Tactical),
+                    sum(clean_game$genres_Tactics),
+                    sum(clean_game$genres_Tank),
+                    sum(clean_game$genres_Team),
+                    sum(clean_game$genres_Tennis),
+                    sum(clean_game$genres_Text),
+                    sum(clean_game$genres_Third.Person),
+                    sum(clean_game$genres_Top.Down),
+                    sum(clean_game$genres_Traditional),
+                    sum(clean_game$genres_Train),
+                    sum(clean_game$genres_Trainer),
+                    sum(clean_game$genres_Trivia...Game.Show),
+                    sum(clean_game$genres_Truck),
+                    sum(clean_game$genres_Turn.Based),
+                    sum(clean_game$genres_Tycoon),
+                    sum(clean_game$genres_Vehicle),
+                    sum(clean_game$genres_Vertical),
+                    sum(clean_game$genres_Videos),
+                    sum(clean_game$genres_Virtual),
+                    sum(clean_game$genres_Virtual.Life),
+                    sum(clean_game$genres_Visual.Novel),
+                    sum(clean_game$genres_Volleyball),
+                    sum(clean_game$genres_Wakeboarding),
+                    sum(clean_game$genres_Wargame),
+                    sum(clean_game$genres_Western.Style),
+                    sum(clean_game$genres_Wrestling),
+                    sum(clean_game$genres_WWI),
+                    sum(clean_game$genres_WWII)
+), ncol = 1)
+colnames(genre_freq) <- c('frequency')
+rownames(genre_freq) <- c('2D','3D','4X','Action','Action.Adventure','Action.RPG',
+'Adventure','Alternative','Application','Arcade','Artillery','Athletics','Automobile','Baseball',
+'Basketball','Beat..Em.Up','Biking','Billiards','Board...Card.Game','Board.Games','Bowling',
+'Boxing','Boxing...Martial.Arts','Breeding.Constructing','Business...Tycoon','Car.Combat',
+'Card.Battle','Career','City.Building','Civilian','Civilian.Plane','Combat','Command',
+'Compilation','Console.style.RPG','Cricket','Dancing','Defense','Demolition.Derby','Drag',
+'Driving','Edutainment','Exercise...Fitness','Fantasy','Fighting','First.Person','Fishing',
+'Flight','Football','Formula.One','Futuristic','Futuristic.Jet','Futuristic.Sub','Gambling',
+'General','Golf','Government','GT...Street','Helicopter','Hidden.Object','Historic','Horizontal',
+'Horror','Horse.Racing','Hunting','Ice.Hockey','Individual','Interactive.Movie','Japanese.Style',
+'Kart','Large.Spaceship','Light.Gun','Linear','Logic','Management','Marine',
+'Massively.Multiplayer','Massively.Multiplayer.Online','Matching','Mech','Military',
+'Miscellaneous','Mission.based','MOBA','Modern','Modern.Jet','Motocross','Motorcycle','Music',
+'Music.Maker','Nature','Olympic.Sports','On.foot','Open.World','Other','Parlor','Party',
+'Party...Minigame','PC.style.RPG','Pet','Pinball','Platformer','Point.and.Click','Puzzle',
+'Racing','Rail','Rally...Offroad','Real.Time','Rhythm','Roguelike','Role.Playing','Rugby',
+'Sandbox','Sci.Fi','Scrolling','Ship','Shoot..Em.Up','Shooter','Sim','Simulation',
+'Skate...Skateboard','Skateboarding','Skating','Ski...Snowboard','Skiing','Small.Spaceship',
+'Snow...Water','Snowboarding','Soccer','Space','Sports','Stacking','Static','Stock.Car',
+'Strategy','Street','Submarine','Surf...Wakeboard','Surfing','Survival','Tactical','Tactics',
+'Tank','Team','Tennis','Text','Third.Person','Top.Down','Traditional','Train','Trainer',
+'Trivia...Game.Show','Truck','Turn.Based','Tycoon','Vehicle','Vertical','Videos','Virtual',
+'Virtual.Life','Visual.Novel','Volleyball','Wakeboarding','Wargame','Western.Style','Wrestling',
+'WWI','WWII')
+## common genre:action, general, action adventure, shooter, and role player
+```
+
+
+```{r}
+#Adding the variable "year" for detecting/visualizing trend
+clean_game$time <- clean_game$release_date
+clean_game <- separate(data = clean_game, col = time, into = c("year", "rest"), sep = 4)
+```
+
+
+```{r}
+#Detecting trends of score difference based on platform over the year
+game_by_platform <- group_by(clean_game, platform, year)
+platform_year_score <- summarize (game_by_platform,
+                                  mean_user = mean (user_score, na.rm = TRUE), 
+                                  mean_meta = mean (meta_score, na.rm = TRUE))
+platform_year_score$mean_diff <- platform_year_score$mean_meta - platform_year_score$mean_user
+tidy_plt_yr_score = subset(platform_year_score, select = -c(mean_user,mean_meta) )
+tidy_plt_yr_score <- gather (data = tidy_plt_yr_score, key = description, value = value, mean_diff)
+
+plot_ly(data = tidy_plt_yr_score, type = "bar",
+        x = ~fct_reorder(platform, value), y = ~value, frame = ~year, showlegend = FALSE)%>%
+   animation_opts(frame = 3000, easing = "elastic", redraw = FALSE)
+```
+
+```{r}
+# Visualization of trends of esrb descriptors of the year
+game_by_year <- group_by (clean_game, year)
+year_desc <- summarize (game_by_year,
+                        gambling = sum(esrb_descs_Gambling, na.rm = TRUE),
+                        blood = sum(esrb_descs_Blood, na.rm = TRUE),
+                        language= sum(esrb_descs_Language, na.rm = TRUE),
+                        humor = sum(esrb_descs_Humor, na.rm = TRUE),
+                        nudity = sum(esrb_descs_Nudity, na.rm = TRUE),
+                        violence = sum(esrb_descs_Violence, na.rm = TRUE),
+                        missing = sum(esrb_descs_missing, na.rm = TRUE))
+
+tidy_year_desc <- gather (data = year_desc, key = descriptor, value = number, gambling, blood, language, humor, nudity, violence, missing)
+plot_ly(data = tidy_year_desc, type = "bar",
+        x = ~fct_reorder(descriptor, number), y = ~number, frame = ~year, showlegend = FALSE)%>%
+   animation_opts(frame = 1000, easing = "elastic", redraw = FALSE)
+
+#double check about missing esrb descriptions after 2015
+```
+
+### More work to do:
+#### 1. missing descriptors after 2015
+##### 2. how to deal with genres and detect trends
