@@ -2,7 +2,9 @@
 title: "EDA"
 author: "Britney"
 date: "2/17/2022"
-output: pdf_document
+output:
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -19,6 +21,7 @@ library(plotly)
 library(corrplot)
 library(RColorBrewer)
 library(lubridate)
+library(DataExplorer)
 ```
 
 ```{r}
@@ -28,6 +31,8 @@ games = read.csv("clean_data_all.csv")
 
 ```{r eda}
 #summary(games)
+plot_intro(games)
+
 #Popular Genres
 #Convert release date to year
 games$year_released = year(as.character(games$release_date))
@@ -48,6 +53,7 @@ top20_genres_by_year_tidy_count$genre_type = gsub("genres_", "", top20_genres_by
 
 #Interactive visualization with plotly (by count)
 visual_top20_by_count = plot_ly(top20_genres_by_year_tidy_count, type = "bar", x = ~fct_reorder(genre_type, count), y = ~count, frame = ~year_released, showlegend = FALSE)
+visual_top20_by_count
 
 #Top 20 by percent
 total_games_by_year = games %>% count(year_released) # calculate total number of games released per year
@@ -60,6 +66,7 @@ top20_genres_by_year_tidy_percent$genre_type = gsub("genres_", "", top20_genres_
 
 #Interactive visualization with plotly (by percent)
 visual_top20_by_percent = plot_ly(top20_genres_by_year_tidy_percent, type = "bar", x = ~fct_reorder(genre_type, percent), y = ~percent, frame = ~year_released, showlegend = FALSE) 
+visual_top20_by_percent
 ```
 
 ```{r}
@@ -69,9 +76,20 @@ ESRB_by_year = ESRB %>% group_by(year_released) %>% summarise(sum(n)) %>% rename
 ESRB = ESRB %>% left_join(ESRB_by_year, by="year_released")
 ESRB$percent = ESRB$n / ESRB$total_by_year
 ESRB = ESRB %>% select(-n, -total_by_year)
-
+#Colors
+colors_rsrb_rating = list(
+  "E" = "#FF99FF",
+  "E10+" = "#FFCCFF",
+  "M" = "#CC99FF",
+  "T" = "#99CCFF",
+  "AO" = "#6699CC",
+  "K-A" = "#9999FF",
+  "RP" = "#003399"
+)
+ESRB$color = dplyr::recode(ESRB$esrb_ratings, !!!colors_rsrb_rating)
 plot_ly(ESRB, type = "pie",labels = ~esrb_ratings, values = ~percent, frame = ~year_released,
-        textinfo = 'label+percent')
+        textinfo = 'label+percent', marker = list( colors = ~color), sort = FALSE)
+
 ```
 
 ```{r}
@@ -115,49 +133,44 @@ platform = platform %>% left_join(platform_by_year, by="year_released")
 platform$percent = platform$n / platform$total_by_year
 platform = platform %>% select(-n, -total_by_year)
 
+colors_platform = list(
+  "PC" = "#FF99FF",
+  "Nintendo 64" = "#FFCCFF",
+  "PlayStation" = "#CC99FF",
+  "PlayStation 2" = "#99CCFF",
+  "PlayStation 3" = "#6699CC",
+  "PlayStation 4" = "#9999FF",
+  "PlayStation 5" = "#003399",
+  "PlayStation Vita" = "#666699",
+  "Dreamcast" = "#FF0000",
+  "Game Boy Advance" = "#FFCC33",
+  "GameCube" = "#FF9900",
+  "Xbox" = "#FF6600",
+  "Xbox 360" = "#CC6600",
+  "Xbox One" = "#663300",
+  "PSP" = "#CCFF99",
+  "Wii" = "#99CC66",
+  "Wii U" = "#669933",
+  "DS" = "#336600",
+  "3DS" = "#FFFFCC",
+  "Switch" = "#660033",
+  "Stadia" = "#330033"
+)
+platform$color = dplyr::recode(platform$platform, !!!colors_platform)
 plot_ly(platform, type = "pie",labels = ~platform, values = ~percent, frame = ~year_released,
-        textinfo = 'label+percent')
+        textinfo = 'label+percent', marker = list(colors = ~color), sort = FALSE)
 ```
 
 
-```{r random_sh*t to be explored later}
-empty_bar <- 10
- 
-# Add lines to the initial dataset
-to_add <- matrix(NA, empty_bar, ncol(a))
-colnames(to_add) <- colnames(a)
-a <- rbind(a, to_add)
-a$id <- seq(1, nrow(a))
- 
-# Get the name and the y position of each label
-label_data <- a
-number_of_bar <- nrow(label_data)
-angle <- 90 - 360 * (label_data$id-0.5) /number_of_bar     # I substract 0.5 because the letter must have the angle of the center of the bars. Not extreme right(1) or extreme left (0)
-label_data$hjust <- ifelse( angle < -90, 1, 0)
-label_data$angle <- ifelse(angle < -90, angle+180, angle)
- 
-# Make the plot
-p <- ggplot(a, aes(x=as.factor(id), y=value)) +       # Note that id is a factor. If x is numeric, there is some space between the first bar
-  geom_bar(stat="identity", fill=alpha("green", 0.3)) +
-  ylim(-100,120) +
-  theme_minimal() +
-  theme(
-    axis.text = element_blank(),
-    axis.title = element_blank(),
-    panel.grid = element_blank(),
-    plot.margin = unit(rep(-1,4), "cm") 
-  ) +
-  coord_polar(start = 0) + 
-  geom_text(data=label_data, aes(x=id, y=value+10, label=individual, hjust=hjust), color="black", fontface="bold",alpha=0.6, size=2.5, angle= label_data$angle, inherit.aes = FALSE ) 
- 
-p
 
+```{r summary & tab}
+#Correlation b/t metascore & userscore 
 Corr = cor(games$meta_score, games$user_score)
-
 Corr 
-#histogram of user & metacritic scores
+#distribution user & metacritic scores
 ggplot(games) + geom_histogram(mapping = aes(x = user_score)) 
 ggplot(games) + geom_histogram(mapping = aes(x = meta_score)) 
+
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
