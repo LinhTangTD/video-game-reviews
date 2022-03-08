@@ -1,0 +1,185 @@
+---
+title: "data_eda_final"
+author: "Britney and Jenny" 
+date: "3/7/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r warning = FALSE, message = FALSE}
+library(tidyr) 
+library(tidyverse)
+library(dplyr) 
+library(purrr)
+library(ggplot2) 
+library(plotly)
+library(corrplot)
+library(RColorBrewer)
+library(lubridate)
+```
+
+## Read Data
+```{r}
+games <- read.csv("/Users/jennyli/Desktop/VGR/video-game-reviews/clean_data/clean_data_model.csv")
+```
+
+## Summary Statistics
+```{r}
+summary(games$user_score)
+summary(games$meta_reviews)
+summary(games$user_reviews)
+summary(games$meta_score)
+summary(games$years_since_released)
+```
+
+```{r}
+#Most Common
+rank_platform <- sort (table(games$platform), decreasing = TRUE)
+#Top 5 platforms
+head(rank_platform)
+#PC, PlayStation4, Xbox 360,PlayStation2, Switch, and PlayStation3
+
+rank_publisher<- sort (table(games$publishers), decreasing = TRUE)
+#Top 5 publisher
+head(rank_publisher)
+#Ubisoft, Electronic Arts, Activision, Nintendo, Sega, and Capcom
+
+rank_developer <- sort (table(games$developers), decreasing = TRUE)
+#Top 5 developer
+head(rank_developer)
+# Capcom, Telltale games, EA Sports, EA Canada, Knami, Ubisoft Montreal
+```
+
+```{r}
+#Distributions/ Histogram of scores
+#user score
+hist(games$user_score)
+#meta score
+hist(games$meta_score)
+```
+
+```{r}
+#Visualizing the difference between meta score and user score
+games$score_diff <- games$meta_score -games$user_score
+hist(games$score_diff)
+
+plot_ly(data = games, type = "scatter",  mode = "markers", x = ~user_score, y = ~meta_score)
+```
+
+```{r}
+# Correlations for numeric columns 
+clean_game_cor <-select(games,user_score, user_reviews, meta_score, meta_reviews, best_game, most_discussed, most_shared, score_diff, years_since_released)
+
+M <-cor(clean_game_cor)
+corrplot(M, type="upper", order="hclust",
+         col=brewer.pal(n=8, name="RdYlBu"))
+```
+
+```{r}
+#Frequency of each esrb content descriptor
+esrb_freq <-list("Blood",sum(games$esrb_descs_Blood), 
+                 "Gambling", sum(games$esrb_descs_Gambling), 
+                 "Humor", sum(games$esrb_descs_Humor),
+                 "Language", sum(games$esrb_descs_Language),
+                 "Nudity", sum(games$esrb_descs_Nudity),
+                 "Violence", sum(games$esrb_descs_Violence),
+                 "Missing", sum(games$esrb_descs_missing))
+
+## Violence 6081,  Blood 2790, Language 2422
+```
+
+```{r eda}
+#summary(games)
+#Popular Genres
+#Convert release date to year
+games$year_released = year(as.character(games$release_date))
+genres = games %>% select(year_released, starts_with("genres_"))
+
+#Genres type by frequency, sorted in descending order
+sort_genres = data.frame(colSums(genres[2:ncol(genres)])) %>% rownames_to_column()  %>% rename(count = colSums.genres.2.ncol.genres..., genre_type = rowname) %>% arrange(-count)
+
+#Get the top 20 most frequent genres
+top20_genres = sort_genres[1:20,]
+
+#Group top 20 by year and summarize the count
+top20_genres_by_year = genres %>% select(year_released, top20_genres$genre_type) %>% group_by(year_released) %>% summarise(across(everything(), sum)) 
+
+#Tidy data for plotly
+top20_genres_by_year_tidy_count = top20_genres_by_year %>% gather(key = genre_type, value = count, 2:21)
+top20_genres_by_year_tidy_count$genre_type = gsub("genres_", "", top20_genres_by_year_tidy_count$genre_type) #clean type name
+
+#Interactive visualization with plotly (by count)
+visual_top20_by_count = plot_ly(top20_genres_by_year_tidy_count, type = "bar", x = ~fct_reorder(genre_type, count), y = ~count, frame = ~year_released, showlegend = FALSE)
+
+#Top 20 by percent
+total_games_by_year = games %>% count(year_released) # calculate total number of games released per year
+top20_genres_by_year_tidy_percent = top20_genres_by_year %>% left_join(total_games_by_year, by="year_released")
+top20_genres_by_year_tidy_percent = top20_genres_by_year_tidy_percent %>% mutate(across(starts_with("genres_"), .fns = ~./n * 100))
+
+#Tidy data for plotly
+top20_genres_by_year_tidy_percent = top20_genres_by_year_tidy_percent %>% select(-n) %>% gather(key = genre_type, value = percent, starts_with("genres_"))
+top20_genres_by_year_tidy_percent$genre_type = gsub("genres_", "", top20_genres_by_year_tidy_percent$genre_type) #clean type name
+
+#Interactive visualization with plotly (by percent)
+visual_top20_by_percent = plot_ly(top20_genres_by_year_tidy_percent, type = "bar", x = ~fct_reorder(genre_type, percent), y = ~percent, frame = ~year_released, showlegend = FALSE) 
+```
+
+```{r}
+#ESRB Rating Trends across year
+ESRB = games %>% count(year_released, esrb_ratings) %>% na.omit()
+ESRB_by_year = ESRB %>% group_by(year_released) %>% summarise(sum(n)) %>% rename(total_by_year = `sum(n)`)
+ESRB = ESRB %>% left_join(ESRB_by_year, by="year_released")
+ESRB$percent = ESRB$n / ESRB$total_by_year
+ESRB = ESRB %>% select(-n, -total_by_year)
+
+plot_ly(ESRB, type = "pie",labels = ~esrb_ratings, values = ~percent, frame = ~year_released,
+        textinfo = 'label+percent')
+```
+
+```{r}
+#Trends of ESRB content descriptions over years
+esrb_content = games %>% select(year_released, starts_with("esrb_descs_"))
+
+#Group by year and summarize the count
+esrb_content_by_year = esrb_content %>% group_by(year_released) %>% summarise(across(everything(), sum)) 
+
+#Tidy data for plotly
+esrb_content_by_year_tidy_count = esrb_content_by_year %>% gather(key = esrb_content, value = count, 2:8)
+esrb_content_by_year_tidy_count$esrb_content = gsub("esrb_descs_", "", esrb_content_by_year_tidy_count$esrb_content) #clean type name
+esrb_content_by_year_tidy_count = esrb_content_by_year_tidy_count[!esrb_content_by_year_tidy_count$esrb_content == "missing",] #drop missing values
+
+#Interactive visualization with plotly (by count)
+visual_esrb_content_by_count = plot_ly(esrb_content_by_year_tidy_count, type = "bar", x = ~fct_reorder(esrb_content, count), y = ~count, frame = ~year_released, showlegend = FALSE)
+visual_esrb_content_by_count
+
+##missing data for esrb content descriptions from 2015-2021
+
+#by percent
+total_games_by_year = games %>% count(year_released) # calculate total number of games released per year
+esrb_content_by_year_tidy_percent = esrb_content_by_year %>% left_join(total_games_by_year, by="year_released")
+esrb_content_by_year_tidy_percent = esrb_content_by_year_tidy_percent %>% mutate(across(starts_with("esrb_descs_"), .fns = ~./n * 100))
+
+#Tidy data for plotly
+esrb_content_by_year_tidy_percent = esrb_content_by_year_tidy_percent %>% select(-n) %>% gather(key = esrb_content, value = percent, starts_with("esrb_descs_"))
+esrb_content_by_year_tidy_percent$esrb_content = gsub("esrb_descs_", "", esrb_content_by_year_tidy_percent$esrb_content) #clean type name
+
+#Interactive visualization with plotly (by percent)
+visual_esrb_content_by_percent = plot_ly(esrb_content_by_year_tidy_percent, type = "bar", x = ~fct_reorder(esrb_content, percent), y = ~percent, frame = ~year_released, showlegend = FALSE) 
+visual_esrb_content_by_percent
+```
+
+```{r}
+#Platform Trends across year
+summary(games$platform)
+platform = games %>% count(year_released, platform) %>% na.omit()
+platform_by_year = platform %>% group_by(year_released) %>% summarise(sum(n)) %>% rename(total_by_year = `sum(n)`)
+platform = platform %>% left_join(platform_by_year, by="year_released")
+platform$percent = platform$n / platform$total_by_year
+platform = platform %>% select(-n, -total_by_year)
+
+plot_ly(platform, type = "pie",labels = ~platform, values = ~percent, frame = ~year_released,
+        textinfo = 'label+percent')
+```
