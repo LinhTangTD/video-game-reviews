@@ -18,8 +18,8 @@ library(udpipe) ## For textual analysis
 
 ```{r read_data, echo=FALSE}
 setwd('/Users/linhtang/Desktop/STA-395/Code')
-games = read_csv("games.csv")
-games2 = read_csv("meta_games2.csv") #data with meta score only
+games = read_csv("raw_data/games.csv")
+games2 = read_csv("raw_data/meta_games2.csv") #data with meta score only
 #summary(games)
 ```
 
@@ -126,9 +126,6 @@ games = cSplit_e(games, "esrb_descs", sep=",", type = "character", fill = 0, dro
 ```{r exporting}
 # meta_data without dropping any original columns
 write_csv(games, "clean_data/clean_data_all.csv") # dim: 18295 x 197
-
-# Count NAs in the first 16 vars (i.e. non-dummy)
-#data.frame(colSums(is.na(games[1:17])))
 
 # Remove redundant columns and NAs from dataset
 games = subset(games, select = -c(link, num_players, num_players_online, genres, esrb_descs))
