@@ -128,7 +128,7 @@ games = cSplit_e(games, "esrb_descs", sep=",", type = "character", fill = 0, dro
 write_csv(games, "clean_data/clean_data_all.csv") # dim: 18295 x 197
 
 # Remove redundant columns and NAs from dataset
-games = subset(games, select = -c(link, num_players, num_players_online, genres, esrb_descs))
+games = subset(games, select = -c(link, num_players, num_players_online, genres, game_desc))
 games = games[complete.cases(games),]
 
 # Export tidy data for modeling
