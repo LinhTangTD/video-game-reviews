@@ -108,7 +108,7 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
                            tabPanel("EDA",
                                     titlePanel("Exploratory Data Analysis"),
                                     sidebarPanel(
-                                                checkboxGroupInput("edachoice", "Please select which visualization you want to see (and please select only one visualization each time): ",
+                                        radioButtons("edachoice", "Please select which visualization you want to see: ",
                                                                    choices = list("Top 20 Genres of Game Trends Across Year (Percentage)", 
                                                                                   "ESRB Ratings Trends Across Year (Percentage)",
                                                                                   "ESRB Content Descriptors Trends Across Year (Percentage)"),
@@ -130,17 +130,17 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
                                     sidebarPanel(
                                         selectInput("Genre", "Genre of the game:",
                                                     choices = c(genre_name)),#end of genre input
-                                        selectInput ("esrbrating", "ESRB Rating of the game: ",
+                                        selectInput("esrbrating", "ESRB Rating of the game: ",
                                                      choices = c("E","E10+","M","T","AO","K-A","RP")), #end of esrb rating input
-                                        selectInput ("desc1","Description Keyword 1: ",
+                                        selectInput("desc1","Description Keyword 1: ",
                                                      choices = c("Blood", "Gambling","Humor", "Nudity","Violence","NA")),#end of description keyword 1
-                                        selectInput ("desc2", "Description Keyword 2: ",
+                                        selectInput("desc2", "Description Keyword 2: ",
                                                      choices = c("Blood", "Gambling","Humor", "Nudity","Violence","NA")), #end of description keyword 2
-                                        selectInput ("desc3", "Description Keyword 3: ",
+                                        selectInput("desc3", "Description Keyword 3: ",
                                                      choices = c("Blood", "Gambling","Humor", "Nudity","Violence","NA")), #end of description keyword 3
-                                        selectInput ("company", "Company of the platform the game is on: ",
-                                                     choices = c("E","E10+","M","T","AO","K-A","RP")), #end of esrb rating input
-                                        selectInput ("esrbrating", "ESRB Rating of the game: ",
+                                        selectInput("company", "Company of the platform the game is on: ",
+                                                     choices = c("PC","Ninendo", "Sony")), #end of esrb rating input
+                                        selectInput("esrbrating", "ESRB Rating of the game: ",
                                                      choices = c("E","E10+","M","T","AO","K-A","RP")), #end of esrb rating input
                                         numericInput("metascore", "Meta Score: ", 
                                                      90, min = 0, max = 100),#end of metascore input
