@@ -18,6 +18,8 @@ library(randomForest)
 library(ggplot2)
 ```
 
+### Data Preparation
+
 ```{r}
 setwd('/Users/linhtang/Desktop/STA-395/Code')
 df = read_csv("clean_data/clean_data_model.csv", na = "missing")
@@ -42,9 +44,12 @@ df$company = as.factor(df$company)
 
 # Remove NAs observation
 final_df = df[complete.cases(df),]
+# model_df = final_df
 model_df = dplyr::select(final_df, -title)
 names(model_df) <- make.names(names(model_df))
 ```
+
+### Split Train-Test Set
 
 ```{r}
 ## 75% of the sample size
@@ -63,23 +68,18 @@ X_test = model.matrix(user_score ~ ., data = test)
 y_test = test$user_score
 ```
 
-DO NOT RUN THE CODE BELOW
+### Variable Selection
 
-```{r}
-# RF model with all 194 predictors
-set.seed(1234)
-rf.fit <- randomForest(x = X_train, y = y_train, importance=TRUE)
-# save the model to disk
-saveRDS(rf.fit, "./rf_model.rds")
+To reduce the number of variables in our prediction model, we use rfcv() — a function in randomForest package for feature selection.
 
+```{r model_fit, eval=FALSE}
+# DO NOT RUN THIS TRUNK
 # Feature Selection for Random Forest using cross-validation
 set.seed(1234)
 rfcv.fit = rfcv(X_train, y_train)
 # save the model to disk
 saveRDS(rfcv.fit, "./rfcv_model.rds")
 ```
-
-### Plot variable selection graph
 
 ```{r}
 rfcv.fit <- readRDS("./rfcv_model.rds") #random forest cross validation model
@@ -97,7 +97,18 @@ Using the results from the random forest cross validation model above, we can pl
 rfcv.fit$error.cv
 ```
 
+### Final Model
+
 Now we fit a random forest model with all predictors to determine the 24 most important predictors to use in our final model.
+
+```{r, eval=FALSE}
+# DO NOT RUN THIS TRUNK
+# RF model with all 194 predictors
+set.seed(1234)
+rf.fit.all <- randomForest(x = X_train, y = y_train, importance=TRUE)
+# save the model to disk
+saveRDS(rf.fit.all, "./rf_model.rds")
+```
 
 ```{r}
 # load pre-trained model
@@ -111,9 +122,8 @@ import_var = import_var[order(-import_var$`%IncMSE`),][1:24,]
 rownames(import_var)
 ```
 
-### Performance Evaluation
-
-```{r}
+```{r, eval=FALSE}
+# DO NOT RUN THIS TRUNK
 # Final RF model with 24 predictors
 set.seed(1234)
 rf.fit <- randomForest(x = X_train[, rownames(import_var)], y = y_train, importance=TRUE)
@@ -121,18 +131,37 @@ rf.fit <- randomForest(x = X_train[, rownames(import_var)], y = y_train, importa
 saveRDS(rf.fit, "./rf_model_final.rds")
 ```
 
+### Performance Evaluation
+
 ```{r}
 rf.fit <- readRDS("./rf_model_final.rds")
 
 # use model to predict test set
-rf_prediction <- predict(rf.fit, X_test[, rownames(import_var)])
+rf_prediction <- predict(rf.fit, X_test)
 
 # calculate RMSE
-RMSE(y_test, rf_prediction) # 4.195301 # 9.698178 # 9.755624
+RMSE(y_test, rf_prediction) # (train) 4.195301 - (test) 9.698178
 
 # R-squared
-1 - var(y_test - rf_prediction) / var(y_test) # 0.9029293 # 0.4814148 # 0.4741155
+1 - var(y_test - rf_prediction) / var(y_test) # (train) 0.9029293 - (test) 0.4816141
 ```
+
+### Making some predictions
+
+```{r}
+# Create a new data frame to store the input value and fill with 0
+new_df = as.data.frame(X_test)[0,]
+for(i in 1:ncol(new_df)) {
+  ###
+  # CHANGE VALUE OF CERTAIN COLUMNS HERE
+  ###
+  new_df[1,i] = 0
+}
+
+# make prediction
+predict(rf.fit, new_df)
+```
+
 
 ### Visualize variable importance
 
@@ -151,11 +180,9 @@ ggplot(import_var, aes(x=Var.Names, y=`%IncMSE`)) +
   ) +
     labs(
       x     = "Feature",
-      y     = "Importance",
+      y     = "Importance (%IncMSE)",
       title = "Feature Importance of RF Model"
     )
-
-varImpPlot(rf.fit, type = 1)
 
 plot(y_test ~ rf_prediction, pch=20, xlab="fitted", ylab="actual", main="Random Forest Goodness-of-fit")
 grid(); abline(0,1)

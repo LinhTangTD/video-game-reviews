@@ -24,7 +24,8 @@ library(shinythemes)
 #library(leaflet)
 
 #load raw data
-games <- read.csv("/Users/linhtang/Desktop/STA-395/Code/clean_data/clean_data_model.csv")
+setwd('/Users/linhtang/Desktop/STA-395/Code')
+games <- read.csv("clean_data/clean_data_model.csv")
 
 #Visualization Preparation
 #Popular Genres
@@ -100,6 +101,20 @@ genre_name <-unique (sort_genres2$genre_type)
 #esrb_content_by_year_tidy_count2$esrb_content = gsub("esrb_descs_", "", esrb_content_by_year_tidy_count2$esrb_content)
 #content_name <-unique (esrb_content_by_year_tidy_count2$esrb_content)
 
+
+# --------- MODEL ----------------
+
+df = read_csv("clean_data/clean_data_model.csv", na = "missing")
+df$is_same_dev_pub = df$developers == df$publishers
+df = dplyr::select(df, -c(platform, developers, publishers, release_date, esrb_descs, allow_multiplayer, allow_online))
+df$esrb_ratings = factor(df$esrb_ratings)
+df$company = as.factor(df$company)
+final_df = df[complete.cases(df),]
+model_df = dplyr::select(final_df, -title)
+names(model_df) <- make.names(names(model_df))
+model_matrix = model.matrix(user_score ~ ., data = model_df)
+rf.fit <- readRDS("./rf_model_final.rds")
+# -------------------------
 # Define UI for application
 ui <- fluidPage(theme = shinytheme("cerulean"),
                 #"united" is the theme for the app selected from the shinytheme package
