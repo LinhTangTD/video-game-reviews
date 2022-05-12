@@ -14,164 +14,151 @@ library(readr)
 library(leaps)
 library(caret)
 library(pls)
+library(randomForest)
+library(ggplot2)
 ```
 
 ```{r}
 setwd('/Users/linhtang/Desktop/STA-395/Code')
 df = read_csv("clean_data/clean_data_model.csv", na = "missing")
 
-# new var whether game is developed and published by same company
-df$same_dev_pub = df$developers == df$publishers
+# Add new var whether game is developed and published by same company
+df$is_same_dev_pub = df$developers == df$publishers
 
-# drop unnecessary for the model
-colnames(df)
-df2 = dplyr::select(df, -c(title, platform, developers, publishers, release_date, esrb_descs))
+# check the number of missing values in each variable
+# sapply(final_df, function(x) sum(is.na(x)))
+
+# Drop unnecessary variables for the model
+# platforms -> company
+# developers, publishers -> is_same_dev_pub
+# release_date -> years_since_released
+# esrb_descs -> dummy vars
+# remove allow_multiplayer and allow_online because they contain so many missing values, 10146 and 7482 respectively
+df = dplyr::select(df, -c(platform, developers, publishers, release_date, esrb_descs, allow_multiplayer, allow_online))
 
 # change to factor
-df2$esrb_ratings = as.factor(df2$esrb_ratings)
-df2$company = as.factor(df2$company)
+df$esrb_ratings = factor(df$esrb_ratings) #, order = TRUE, levels =c('K-A', 'E', 'E10+', 'T', 'M', 'A0', 'RP'))
+df$company = as.factor(df$company)
 
 # Remove NAs observation
-df3 = df2[complete.cases(df2),]
+final_df = df[complete.cases(df),]
+model_df = dplyr::select(final_df, -title)
+names(model_df) <- make.names(names(model_df))
 ```
 
 ```{r}
-# build linear regression model
-all = regsubsets(user_score~., data = df3, method = "seqrep", nbest = 1, nvmax = 15)
-reg_summary = summary(all)
+## 75% of the sample size
+smp_size <- floor(0.75 * nrow(model_df))
 
-# Set up a 2x2 grid so we can look at 4 plots at once
-par(mfrow = c(2,2))
-plot(reg_summary$rss, xlab = "Number of Variables", ylab = "RSS", type = "l")
-plot(reg_summary$adjr2, xlab = "Number of Variables", ylab = "Adjusted RSq", type = "l")
-
-# We will now plot a red dot to indicate the model with the largest adjusted R^2 statistic.
-# The which.max() function can be used to identify the location of the maximum point of a vector
-adj_r2_max = which.max(reg_summary$adjr2) # 11
-
-# The points() command works like the plot() command, except that it puts points 
-# on a plot that has already been created instead of creating a new plot
-points(adj_r2_max, reg_summary$adjr2[adj_r2_max], col ="red", cex = 2, pch = 20)
-
-# We'll do the same for C_p and BIC, this time looking for the models with the SMALLEST statistic
-plot(reg_summary$cp, xlab = "Number of Variables", ylab = "Cp", type = "l")
-cp_min = which.min(reg_summary$cp) # 10
-points(cp_min, reg_summary$cp[cp_min], col = "red", cex = 2, pch = 20)
-
-plot(reg_summary$bic, xlab = "Number of Variables", ylab = "BIC", type = "l")
-bic_min = which.min(reg_summary$bic) # 6
-points(bic_min, reg_summary$bic[bic_min], col = "red", cex = 2, pch = 20)
-
-# Look at coefficients of our "best-selected" variables
-coef(all, id=which.min(reg_summary$bic)) # 12 variables
-```
-
-```{r, echo=FALSE}
-# Stepwise Regression using AIC
-nullmodel<- lm(user_score~1, data = df3)
-fullmodel<- lm(user_score~., data = df3)
-model.step.s <- step(nullmodel, scope=list(lower=nullmodel, upper=fullmodel), direction='both')
-
-model.sum = summary(model.step.s)
-model.sum
-```
-
-```{r}
-# Set seed for reproducibility
+## set the seed to make your partition reproducible
 set.seed(123)
-# Set up repeated k-fold cross-validation
-train.control <- trainControl(method = "cv", number = 10)
-# Train the model
-step.model <- train(user_score ~., data = df3,
-                    method = "leapSeq", 
-                    tuneGrid = data.frame(nvmax = 1:52),
-                    trControl = train.control
-                    )
-step.model$results
-step.model$bestTune
+train_ind <- sample(seq_len(nrow(model_df)), size = smp_size)
+
+train <- model_df[train_ind, ]
+test <- model_df[-train_ind, ]
+
+X_train = model.matrix(user_score ~ ., data = train)
+y_train = train$user_score
+X_test = model.matrix(user_score ~ ., data = test)
+y_test = test$user_score
 ```
 
+DO NOT RUN THE CODE BELOW
 
 ```{r}
-#make this example reproducible
-set.seed(0)
+# RF model with all 194 predictors
+set.seed(1234)
+rf.fit <- randomForest(x = X_train, y = y_train, importance=TRUE)
+# save the model to disk
+saveRDS(rf.fit, "./rf_model.rds")
 
-#fit PCR model
-model <- pcr(user_score ~ ., data=df3, scale=TRUE, validation="CV")
+# Feature Selection for Random Forest using cross-validation
+set.seed(1234)
+rfcv.fit = rfcv(X_train, y_train)
+# save the model to disk
+saveRDS(rfcv.fit, "./rfcv_model.rds")
 ```
 
+### Plot variable selection graph
 
-```{r xgboost}
-#make this example reproducible
-set.seed(0)
+```{r}
+rfcv.fit <- readRDS("./rfcv_model.rds") #random forest cross validation model
 
-#split into training (80%) and testing set (20%)
-parts = createDataPartition(data$medv, p = .8, list = F)
-train = data[parts, ]
-test = data[-parts, ]
+plot(rfcv.fit$n.var, rfcv.fit$error.cv, xlab="Number of Variables", ylab="Cross Validation Error", main = "Estimated Error by Number of Variables", ylim = c(95, 135), xlim = c(0, 202), type="o", lwd=2)
 
-#define predictor and response variables in training set
-train_x = data.matrix(train[, -13])
-train_y = train[,13]
+lines(rfcv.fit$n.var[order(rfcv.fit$n.var)], rfcv.fit$error.cv[order(rfcv.fit$n.var)], pch=16)
 
-#define predictor and response variables in testing set
-test_x = data.matrix(test[, -13])
-test_y = test[, 13]
+text(rfcv.fit$n.var+5, rfcv.fit$error.cv+2, labels=round(rfcv.fit$error.cv))
+```
 
-#define final training and testing sets
-xgb_train = xgb.DMatrix(data = train_x, label = train_y)
-xgb_test = xgb.DMatrix(data = test_x, label = test_y)
+Using the results from the random forest cross validation model above, we can plot the cross validation error rate by the number of predictors used in the model. As seen in the plot below, the error rate drop significantly as the model predictors increase from 1 to 24. As the predictors are increased from 24 to 194, the error rate starts to level off.
 
-#define watchlist
-watchlist = list(train=xgb_train, test=xgb_test)
+```{r}
+rfcv.fit$error.cv
+```
 
-#fit XGBoost model and display training and testing data at each round
-model = xgb.train(data = xgb_train, max.depth = 3, watchlist=watchlist, nrounds = 100)
+Now we fit a random forest model with all predictors to determine the 24 most important predictors to use in our final model.
 
-#calculate the following accuracy measures for the model
-mean((test_y - pred_y)^2) #mse
-caret::MAE(test_y, pred_y) #mae
-caret::RMSE(test_y, pred_y) #rmse
+```{r}
+# load pre-trained model
+rf.fit.all <- readRDS("./rf_model.rds")
+
+# predictors with their importance value
+import_var <- as.data.frame(importance(rf.fit.all))
+
+# get 24 "most important" predictors
+import_var = import_var[order(-import_var$`%IncMSE`),][1:24,]
+rownames(import_var)
+```
+
+### Performance Evaluation
+
+```{r}
+# Final RF model with 24 predictors
+set.seed(1234)
+rf.fit <- randomForest(x = X_train[, rownames(import_var)], y = y_train, importance=TRUE)
+# save the model to disk
+saveRDS(rf.fit, "./rf_model_final.rds")
 ```
 
 ```{r}
-# id: model id
-# object: regsubsets object
-# data: data used to fit regsubsets
-# outcome: outcome variable
-get_model_formula <- function(id, object, outcome){
-  # get models data
-  models <- summary(object)$which[id,-1]
-  # Get outcome variable
-  #form <- as.formula(object$call[[2]])
-  #outcome <- all.vars(form)[1]
-  # Get model predictors
-  predictors <- names(which(models == TRUE))
-  predictors <- paste(predictors, collapse = "+")
-  # Build model formula
-  as.formula(paste0(outcome, "~", predictors))
-}
+rf.fit <- readRDS("./rf_model_final.rds")
 
-#get the cross-validation (CV) error for a given model
-get_cv_error <- function(model.formula, data){
-  set.seed(1)
-  train.control <- trainControl(method = "cv", number = 5)
-  cv <- train(model.formula, data = data, method = "lm",
-              trControl = train.control)
-  cv$results$RMSE
-}
+# use model to predict test set
+rf_prediction <- predict(rf.fit, X_test[, rownames(import_var)])
 
-# Compute cross-validation error
-model.ids <- 1:12
-cv.errors <-  map(model.ids, get_model_formula, models, "Fertility") %>%
-  map(get_cv_error, data = swiss) %>%
-  unlist()
-cv.errors
+# calculate RMSE
+RMSE(y_test, rf_prediction) # 4.195301 # 9.698178 # 9.755624
 
-# Cross Validation
-fit.control <- trainControl(method = "repeatedcv", number = 5, repeats = 10)
-colnames(df2) <- make.names(colnames(df2))
-set.seed(123)  
-fit1 <- train(user_score ~ ., data = df2, method = "rpart", trControl = fit.control, na.action = na.pass)
-fit1$resample
+# R-squared
+1 - var(y_test - rf_prediction) / var(y_test) # 0.9029293 # 0.4814148 # 0.4741155
+```
+
+### Visualize variable importance
+
+```{r}
+import_var$Var.Names <- row.names(import_var)
+
+ggplot(import_var, aes(x=Var.Names, y=`%IncMSE`)) +
+  geom_segment( aes(x=Var.Names, xend=Var.Names, y=0, yend=`%IncMSE`), color="skyblue") +
+  theme_light() +
+  coord_flip() +
+  theme(
+    legend.position="bottom",
+    panel.grid.major.y = element_blank(),
+    panel.border = element_blank(),
+    axis.ticks.y = element_blank()
+  ) +
+    labs(
+      x     = "Feature",
+      y     = "Importance",
+      title = "Feature Importance of RF Model"
+    )
+
+varImpPlot(rf.fit, type = 1)
+
+plot(y_test ~ rf_prediction, pch=20, xlab="fitted", ylab="actual", main="Random Forest Goodness-of-fit")
+grid(); abline(0,1)
+
+plot(rf.fit)
 ```

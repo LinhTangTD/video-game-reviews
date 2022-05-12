@@ -24,7 +24,7 @@ library(shinythemes)
 #library(leaflet)
 
 #load raw data
-games <- read.csv("/Users/jennyli/Desktop/VGR/video-game-reviews/clean_data/clean_data_model.csv")
+games <- read.csv("/Users/linhtang/Desktop/STA-395/Code/clean_data/clean_data_model.csv")
 
 #Visualization Preparation
 #Popular Genres
@@ -138,8 +138,16 @@ ui <- fluidPage(theme = shinytheme("cerulean"),
                                                      choices = c("Blood", "Gambling","Humor", "Nudity","Violence","NA")), #end of description keyword 2
                                         selectInput ("desc3", "Description Keyword 3: ",
                                                      choices = c("Blood", "Gambling","Humor", "Nudity","Violence","NA")), #end of description keyword 3
+                                        selectInput ("company", "Company of the platform the game is on: ",
+                                                     choices = c("E","E10+","M","T","AO","K-A","RP")), #end of esrb rating input
+                                        selectInput ("esrbrating", "ESRB Rating of the game: ",
+                                                     choices = c("E","E10+","M","T","AO","K-A","RP")), #end of esrb rating input
                                         numericInput("metascore", "Meta Score: ", 
                                                      90, min = 0, max = 100),#end of metascore input
+                                        numericInput("metascore", "Number of Meta Reviews: ", 
+                                                     90, min = 0, max = 100),#end of number of meta reviews
+                                        numericInput("metascore", "Number of User Reviews: ", 
+                                                     90, min = 0, max = 100),#end of number of meta reviews
                                         numericInput ("year", "Released Year:",
                                                       2019), #end of released year input
                                     ),#end of sidebar panel 
