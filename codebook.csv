@@ -1,0 +1,403 @@
+"","Variable_Name","Variable_Descriptions","Variable_Type","Value_Descriptions"
+"1","title","title of the game","character","full name of the game "
+"2","platform","platform","character","platform that the game is published"
+"3","release_date","the release date of the game","character","specific release date of the game in year-month-date format"
+"4","game_desc","description of the game on the Metacritic page","character","a paragraph of game descriptions scripted from Metacritic "
+"5","user_score","score of the game from users","numeric","users' score for the game out of 100"
+"6","link","link to the metacritic page of the game","character","link to the page of the game on metacritic"
+"7","num_players","number of players","character","the number of players that the game support
+x player: the game support x players to play
+missing: missing information about the number of players that this game supported 
+NA: not avilable/ not applicable"
+"8","num_players_online","number of online players","character","the specific number of online playes that the game supported
+missing: missing information about the number of players that this game supported 
+NA: not avilable/ not applicable"
+"9","developers","the developer of the the game","character","specific developers of the game"
+"10","genres","generes of the game","character","genres of the game classified on Metacrtics (specific information about genre are included in the genre dummy varibales) "
+"11","esrb_descs","ESRB descriptions for the game","character","ESRB descriptions of the game
+missing: missing information 
+NA: not avilable/ not applicable"
+"12","meta_reviews","number of meta reviews that this game received ","numeric","number of meta reviews that this game received 
+NA: not avilable/ not applicable"
+"13","user_reviews","number of user reviews that this game received ","numeric","number of user reviews that this game received 
+NA: not avilable/ not applicable"
+"14","publishers","publishers","character","publishers
+NA: not avilable/ not applicable"
+"15","esrb_ratings","ESRB ratings of the game","character","E: Everyone
+E10+ : everyone that is above 10
+T: Teen (13 and above)
+M: Mature (17 and above)
+AO: Adults only 18 and above
+K-A: kids to adults
+missing: missing information 
+NA: not avilable/ not applicable"
+"16","best_game","the ranking of the game for the best game award of the year","numeric","1: the game won the best game award of the year
+2-99: the specific rank of the game in best game rankings of the year
+100: the game did not win the best game award or included in the ranking of the year or there is no information about this"
+"17","most_discussed","the ranking of the game for the most discussed award of the year","numeric","1: the game is the most discussed game of the year
+2-99: the specific rank of the game in most discussed game rankings of the year
+100: the game are not listed in the ranking of most discussed game of the year or there is no information about this"
+"18","most_shared","the ranking of the game for the most shared award of the year","numeric","1: the game is the most shared game of the year
+2-99: the specific rank of the game in most shared game rankings of the year
+100: the game did not win the best game award or included in the ranking of the year or there is no information about this"
+"19","meta_score","score for the game from metacritics","numeric","users' score for the game out of 100"
+"20","company","company of the game based on the platform ","character","company of the game based on the platform "
+"21","years_since_released","number of years from now since the game has beem released","numeric","number of years from now since the game has beem released"
+"22","allow_multiplayer","whether the game allow multiplayer","character","TRUE: the game allows multiplayer
+FALSE: the game does not allow multiplayer
+missing: missing information
+NA: not avialable/not applicable"
+"23","allow_online","whether the game support online","character","TRUE: the game supports online
+FALSE: the game does not support online
+missing: missing information
+NA: not avialable/not applicable"
+"24","genres_2D","whether the game is classified as 2D for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"25","genres_3D","whether the game is classified as 3D for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"26","genres_4X","whether the game is classified as 4X for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"27","genres_Action","whether the game is classified as action for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"28","genres_Action.Adventure","whether the game is classified as action adventure for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"29","genres_Action.RPG","whether the game is classified as action RPG for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"30","genres_Adventure","whether the game is classified as adventure for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"31","genres_Alternative","whether the game is classified as alternative for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"32","genres_Application","whether the game is classified as application for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"33","genres_Arcade","whether the game is classified as aracade for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"34","genres_Artillery","whether the game is classified as artillery for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"35","genres_Athletics","whether the game is classified as athletics for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"36","genres_Automobile","whether the game is classified as automobile for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"37","genres_Baseball","whether the game is classified as baseball for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"38","genres_Basketball","whether the game is classified as basketball for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"39","genres_Beat..Em.Up","whether the game is classified as beat-em-up for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"40","genres_Biking","whether the game is classified as biking for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"41","genres_Billiards","whether the game is classified as billiards for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"42","genres_Board...Card.Game","whether the game is classified as board/card game for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"43","genres_Board.Games","whether the game is classified as board game for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"44","genres_Bowling","whether the game is classified as bowling for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"45","genres_Boxing","whether the game is classified as boxing for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"46","genres_Boxing...Martial.Arts","whether the game is classified as boxing/martial arts for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"47","genres_Breeding.Constructing","whether the game is classified as constructing for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"48","genres_Business...Tycoon","whether the game is classified as business tycoon for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"49","genres_Car.Combat","whether the game is classified as car combat for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"50","genres_Card.Battle","whether the game is classified as card battle for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"51","genres_Career","whether the game is classified as career for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"52","genres_City.Building","whether the game is classified as city building for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"53","genres_Civilian","whether the game is classified as civilian for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"54","genres_Civilian.Plane","whether the game is classified as civilian plane for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"55","genres_Combat","whether the game is classified as combat for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"56","genres_Command","whether the game is classified as command for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"57","genres_Compilation","whether the game is classified as compilation for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"58","genres_Console.style.RPG","whether the game is classified as console style RPG for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"59","genres_Cricket","whether the game is classified as cricket for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"60","genres_Dancing","whether the game is classified as dancing for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"61","genres_Defense","whether the game is classified as defense for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"62","genres_Demolition.Derby","whether the game is classified as demolition derby for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"63","genres_Drag","whether the game is classified as drag for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"64","genres_Driving","whether the game is classified as driving for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"65","genres_Edutainment","whether the game is classified as edutainment for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"66","genres_Exercise...Fitness","whether the game is classified as exercise/fitness for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"67","genres_Fantasy","whether the game is classified as fantasy for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"68","genres_Fighting","whether the game is classified as fighting for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"69","genres_First.Person","whether the game is classified as first personfor genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"70","genres_Fishing","whether the game is classified as fishing for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"71","genres_Flight","whether the game is classified as flight for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"72","genres_Football","whether the game is classified as football for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"73","genres_Formula.One","whether the game is classified as formula one for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"74","genres_Futuristic","whether the game is classified as futuristic for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"75","genres_Futuristic.Jet","whether the game is classified as futuristic jet for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"76","genres_Futuristic.Sub","whether the game is classified as futuristic sub for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"77","genres_Gambling","whether the game is classified as gambling for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"78","genres_General","whether the game is classified as general for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"79","genres_Golf","whether the game is classified as golf for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"80","genres_Government","whether the game is classified as government for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"81","genres_GT...Street","whether the game is classified as GT/street for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"82","genres_Helicopter","whether the game is classified as helicopter for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"83","genres_Hidden.Object","whether the game is classified as hidden object for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"84","genres_Historic","whether the game is classified as historic for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"85","genres_Horizontal","whether the game is classified as horizontal for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"86","genres_Horror","whether the game is classified as horror for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"87","genres_Horse.Racing","whether the game is classified as horse racing for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"88","genres_Hunting","whether the game is classified as hunting for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"89","genres_Ice.Hockey","whether the game is classified as ice hockey for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"90","genres_Individual","whether the game is classified as individual for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"91","genres_Interactive.Movie","whether the game is classified as interactive movie for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"92","genres_Japanese.Style","whether the game is classified as japanese style for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"93","genres_Kart","whether the game is classified as kart for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"94","genres_Large.Spaceship","whether the game is classified as large spaceship for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"95","genres_Light.Gun","whether the game is classified as light gun for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"96","genres_Linear","whether the game is classified as linear for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"97","genres_Logic","whether the game is classified as logic for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"98","genres_Management","whether the game is classified as management for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"99","genres_Marine","whether the game is classified as marine for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"100","genres_Massively.Multiplayer","whether the game is classified as massivly multiplayer for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"101","genres_Massively.Multiplayer.Online","whether the game is classified as massively multiplayer online for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"102","genres_Matching","whether the game is classified as matching for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"103","genres_Mech","whether the game is classified as mech for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"104","genres_Military","whether the game is classified as military for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"105","genres_Miscellaneous","whether the game is classified as miscellaneous for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"106","genres_Mission.based","whether the game is classified as mission based for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"107","genres_MOBA","whether the game is classified as MOBA for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"108","genres_Modern","whether the game is classified as modern for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"109","genres_Modern.Jet","whether the game is classified as modern jet for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"110","genres_Motocross","whether the game is classified as motocross for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"111","genres_Motorcycle","whether the game is classified as motorcycle for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"112","genres_Music","whether the game is classified as music for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"113","genres_Music.Maker","whether the game is classified as music makerfor genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"114","genres_Nature","whether the game is classified as nature for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"115","genres_Olympic.Sports","whether the game is classified as olympic sports for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"116","genres_On.foot","whether the game is classified as on foot for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"117","genres_Open.World","whether the game is classified as open world for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"118","genres_Other","whether the game is classified as other for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"119","genres_Parlor","whether the game is classified as parlor for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"120","genres_Party","whether the game is classified as party for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"121","genres_Party...Minigame","whether the game is classified as party/minigame for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"122","genres_PC.style.RPG","whether the game is classified as PC style RPG for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"123","genres_Pet","whether the game is classified as pet for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"124","genres_Pinball","whether the game is classified as pinball for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"125","genres_Platformer","whether the game is classified as platformer for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"126","genres_Point.and.Click","whether the game is classified as point and click for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"127","genres_Puzzle","whether the game is classified as puzzle for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"128","genres_Racing","whether the game is classified as racing for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"129","genres_Rail","whether the game is classified as rail for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"130","genres_Rally...Offroad","whether the game is classified as rally/offroad for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"131","genres_Real.Time","whether the game is classified as real time for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"132","genres_Rhythm","whether the game is classified as rhythm for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"133","genres_Roguelike","whether the game is classified as roguelike for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"134","genres_Role.Playing","whether the game is classified as role playing for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"135","genres_Rugby","whether the game is classified as rugby for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"136","genres_Sandbox","whether the game is classified as sandbox for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"137","genres_Sci.Fi","whether the game is classified as sci fi for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"138","genres_Scrolling","whether the game is classified as scrolling for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"139","genres_Ship","whether the game is classified as ship for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"140","genres_Shoot..Em.Up","whether the game is classified as shoot 'em-up for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"141","genres_Shooter","whether the game is classified as shooter for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"142","genres_Sim","whether the game is classified as sim for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"143","genres_Simulation","whether the game is classified as simulation for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"144","genres_Skate...Skateboard","whether the game is classified as skate/skateboard for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"145","genres_Skateboarding","whether the game is classified as skateboarding for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"146","genres_Skating","whether the game is classified as skating for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"147","genres_Ski...Snowboard","whether the game is classified as ski/snowboard for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"148","genres_Skiing","whether the game is classified as skiing for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"149","genres_Small.Spaceship","whether the game is classified as small spaceship for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"150","genres_Snow...Water","whether the game is classified as snow/water for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"151","genres_Snowboarding","whether the game is classified as snowboarding for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"152","genres_Soccer","whether the game is classified as soccer for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"153","genres_Space","whether the game is classified as space for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"154","genres_Sports","whether the game is classified as sports for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"155","genres_Stacking","whether the game is classified as stacking for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"156","genres_Static","whether the game is classified as static for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"157","genres_Stock.Car","whether the game is classified as stock car for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"158","genres_Strategy","whether the game is classified as strategy for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"159","genres_Street","whether the game is classified as street for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"160","genres_Submarine","whether the game is classified as submarine for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"161","genres_Surf...Wakeboard","whether the game is classified as surf wakeboard for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"162","genres_Surfing","whether the game is classified as surfing for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"163","genres_Survival","whether the game is classified as survival for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"164","genres_Tactical","whether the game is classified as tactical for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"165","genres_Tactics","whether the game is classified as tactics for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"166","genres_Tank","whether the game is classified as tank for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"167","genres_Team","whether the game is classified as team for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"168","genres_Tennis","whether the game is classified as tennis for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"169","genres_Text","whether the game is classified as text for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"170","genres_Third.Person","whether the game is classified as third person for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"171","genres_Top.Down","whether the game is classified as top down for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"172","genres_Traditional","whether the game is classified as traditional for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"173","genres_Train","whether the game is classified as train for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"174","genres_Trainer","whether the game is classified as trainer for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"175","genres_Trivia...Game.Show","whether the game is classified as trivia/game show for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"176","genres_Truck","whether the game is classified as truck for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"177","genres_Turn.Based","whether the game is classified as turn based for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"178","genres_Tycoon","whether the game is classified as tycoon for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"179","genres_Vehicle","whether the game is classified as vehicle for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"180","genres_Vertical","whether the game is classified as vertical for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"181","genres_Videos","whether the game is classified as videos for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"182","genres_Virtual","whether the game is classified as virtual for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"183","genres_Virtual.Life","whether the game is classified as virtual life for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"184","genres_Visual.Novel","whether the game is classified as visual novel for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"185","genres_Volleyball","whether the game is classified as volleyball for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"186","genres_Wakeboarding","whether the game is classified as wakeboarding for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"187","genres_Wargame","whether the game is classified as wargame for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"188","genres_Western.Style","whether the game is classified as Western style for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"189","genres_Wrestling","whether the game is classified as wrestling for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"190","genres_WWI","whether the game is classified as WWI for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"191","genres_WWII","whether the game is classified as WWII for genre","numeric","1: the game is classified for this genre on Metacritic
+0: the game is not classifed for this genre on Metacritic"
+"192","esrb_descs_Blood","whether the game is classifed as blood in ESRB descriptions","numeric","1: the game is classified under this ESRB descriptor
+0: the game is not classified under this ESRB descriptor"
+"193","esrb_descs_Gambling","whether the game is classifed as gambling in ESRB descriptions","numeric","1: the game is classified under this ESRB descriptor
+0: the game is not classified under this ESRB descriptor"
+"194","esrb_descs_Humor","whether the game is classifed as humor in ESRB descriptions","numeric","1: the game is classified under this ESRB descriptor
+0: the game is not classified under this ESRB descriptor"
+"195","esrb_descs_Language","whether the game is classifed as language in ESRB descriptions","numeric","1: the game is classified under this ESRB descriptor
+0: the game is not classified under this ESRB descriptor"
+"196","esrb_descs_missing","whether the game is classifed as missing in ESRB descriptions","numeric","1: the game is classified under this ESRB descriptor
+0: the game is not classified under this ESRB descriptor"
+"197","esrb_descs_Nudity","whether the game is classifed as nudity in ESRB descriptions","numeric","1: the game is classified under this ESRB descriptor
+0: the game is not classified under this ESRB descriptor"
+"198","esrb_descs_Violence","whether the game is classifed as violence in ESRB descriptions","numeric","1: the game is classified under this ESRB descriptor
+0: the game is not classified under this ESRB descriptor"

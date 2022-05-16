@@ -1,0 +1,13 @@
+name: VideoGameReviews
+title: VideoGameReviews
+username:
+account: tanglinh
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 6314544
+bundleId: 5913253
+url: https://tanglinh.shinyapps.io/VideoGameReviews/
+when: 1652744787.30958
+lastSyncTime: 1652744787.3096
+asMultiple: FALSE
+asStatic: FALSE

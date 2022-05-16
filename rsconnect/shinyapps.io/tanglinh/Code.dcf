@@ -1,0 +1,14 @@
+name: Code
+title: Code
+username:
+account: tanglinh
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 6314300
+bundleId: 5913159
+url: https://tanglinh.shinyapps.io/Code/
+when: 1652741734.60949
+lastSyncTime: 1652741734.60951
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: clean_data/.DS_Store|clean_data/clean_data_all.csv|data_cleaning.Rmd|data_eda_final.html|data_eda_final.Rmd|data_model.html|english-ewt-ud-2.5-191206.udpipe|games_data.Rdata|Model_Britney.Rmd|raw_data/.DS_Store|raw_data/games_with_notes.csv|raw_data/games.csv|raw_data/meta_games2.csv|README.md

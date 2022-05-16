@@ -21,8 +21,7 @@ library(ggplot2)
 ### Data Preparation
 
 ```{r}
-setwd('/Users/linhtang/Desktop/STA-395/Code')
-df = read_csv("clean_data/clean_data_model.csv", na = "missing")
+df = read_csv("clean_data_model.csv", na = "missing")
 
 # Add new var whether game is developed and published by same company
 df$is_same_dev_pub = df$developers == df$publishers
@@ -78,11 +77,11 @@ To reduce the number of variables in our prediction model, we use rfcv() — a f
 set.seed(1234)
 rfcv.fit = rfcv(X_train, y_train)
 # save the model to disk
-saveRDS(rfcv.fit, "./rfcv_model.rds")
+saveRDS(rfcv.fit, "rfcv_model.rds")
 ```
 
 ```{r}
-rfcv.fit <- readRDS("./rfcv_model.rds") #random forest cross validation model
+rfcv.fit <- readRDS("rfcv_model.rds") #random forest cross validation model
 
 plot(rfcv.fit$n.var, rfcv.fit$error.cv, xlab="Number of Variables", ylab="Cross Validation Error", main = "Estimated Error by Number of Variables", ylim = c(95, 135), xlim = c(0, 202), type="o", lwd=2)
 
@@ -107,12 +106,12 @@ Now we fit a random forest model with all predictors to determine the 24 most im
 set.seed(1234)
 rf.fit.all <- randomForest(x = X_train, y = y_train, importance=TRUE)
 # save the model to disk
-saveRDS(rf.fit.all, "./rf_model.rds")
+saveRDS(rf.fit.all, "rf_model.rds")
 ```
 
 ```{r}
 # load pre-trained model
-rf.fit.all <- readRDS("./rf_model.rds")
+rf.fit.all <- readRDS("rf_model.rds")
 
 # predictors with their importance value
 import_var <- as.data.frame(importance(rf.fit.all))
@@ -128,13 +127,13 @@ rownames(import_var)
 set.seed(1234)
 rf.fit <- randomForest(x = X_train[, rownames(import_var)], y = y_train, importance=TRUE)
 # save the model to disk
-saveRDS(rf.fit, "./rf_model_final.rds")
+saveRDS(rf.fit, "rf_model_final.rds")
 ```
 
 ### Performance Evaluation
 
 ```{r}
-rf.fit <- readRDS("./rf_model_final.rds")
+rf.fit <- readRDS("rf_model_final.rds")
 
 # use model to predict test set
 rf_prediction <- predict(rf.fit, X_test)

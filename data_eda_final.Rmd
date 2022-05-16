@@ -24,7 +24,7 @@ library(lubridate)
 
 ## Read Data
 ```{r}
-games <- read.csv("/Users/jennyli/Desktop/VGR/video-game-reviews/clean_data/clean_data_model.csv")
+games <- read.csv("clean_data_model.csv")
 ```
 
 ## Summary Statistics
